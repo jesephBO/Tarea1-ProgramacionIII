@@ -13,4 +13,5 @@ Durante la ejecución se llaman a otras funciones como:
 - View: Reorganiza los datos sin hacer una copia.
 - Unsqueeze: Ajusta las dimensiones para que se pueda realizer operaciones
 - Apply: Aplica transformaciones usando ReLU y Sigmoid.
+
 Además, el programa imprime las dimensiones de los tensores en cada etapa, lo que facilita verificar que las operaciones se realizan correctamente.
