@@ -7,6 +7,7 @@
 #include <iostream>
 #include <vector>
 #include <random>
+#include <iomanip>
 #include <algorithm>
 #include <cmath>
 using namespace std;
@@ -36,11 +37,13 @@ public:
     Tensor operator*(const Tensor& tensorB) const; //sobrecarga de operador 'multiplicacion' entre tensores
     Tensor operator*(double num) const; //sobrecarga de operador 'multiplicacion' entre un tensor y un numero
     static Tensor concat(vector<Tensor> tensores,int eje); //metodo estatico 'concat'
-    Tensor view(const vector<size_t>& nueva_dim) const; //Metodo 'view' para cambiar la organizacion de las dimensiones
-    Tensor unsqueeze(size_t num) const; //Metodo 'unsqueeze' para agregar una dimension de tamanio 1, en una posicion especifica
+    Tensor view(const vector<size_t>& nueva_dim) ; //Metodo 'view' para cambiar la organizacion de las dimensiones
+    Tensor unsqueeze(size_t num) ; //Metodo 'unsqueeze' para agregar una dimension de tamanio 1, en una posicion especifica
     friend Tensor dot(const Tensor& a, const Tensor& b); //funcion amiga 'dot' para el producto punto entre tensores
     friend Tensor matmul(const Tensor& a, const Tensor& b); //funcion amiga matmul para multiplicacion matricial
-    Tensor():data(nullptr),dimensiones({}),dim_total(0){} // Provisional hasta que revise
+    Tensor():data(nullptr),dimensiones({}),dim_total(0){} // Constructor vacio auxiliar
+    //(OPCIONAL) Se hace una sobrecarga del simbolo '<<' para evidenciar el funcionamiento de la clase
+    friend ostream& operator<<(ostream& os,const Tensor& t);
 };
 
 class TensorTransform { //clase para realizar transformaciones a cada elemento del tensor

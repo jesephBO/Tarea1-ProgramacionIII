@@ -113,10 +113,10 @@ Tensor Tensor::operator+(const Tensor &tensorB) const {
     //Suma con bias (solo aplica para tensores 2D). Tomamos la notacion 'fila X columna'
     //Asumimos que en la suma bias, el primer tensor es el que tiene dimensiones con valores mayores
     if (dimensiones.size()==2 and tensorB.dimensiones.size()==2) {
-        size_t fil_A = dimensiones[0];
-        size_t col_A = dimensiones[1];
-        size_t fil_B = tensorB.dimensiones[0];
-        size_t col_B = tensorB.dimensiones[1];
+        size_t fil_A = dimensiones[0]; //Cantidad de filas del primer tensor
+        size_t col_A = dimensiones[1]; //Cantidad de columnas del primer tensor
+        size_t fil_B = tensorB.dimensiones[0]; //Cantidad de filas del segundo tensor
+        size_t col_B = tensorB.dimensiones[1]; //Cantidad de columnas del segundo tensor
         if (fil_B==1 and col_A==col_B) { //Verifica si la dimension con valor 1 se encuentra en la 'fila' del segundo tensor
             vector<double> resultado(dim_total);
             for (size_t i=0;i<fil_A;i++)
@@ -128,7 +128,7 @@ Tensor Tensor::operator+(const Tensor &tensorB) const {
             vector<double> resultado(dim_total);
             for (size_t i=0;i<fil_A;i++)
                 for (size_t j=0;j<col_A;j++)
-                    resultado[i*col_A+j] = data[i*col_A+j]+tensorB.data[j];
+                    resultado[i*col_A+j] = data[i*col_A+j]+tensorB.data[i];
             return Tensor(dimensiones,resultado);
         }
         else
@@ -287,57 +287,67 @@ Tensor Tensor::concat(vector<Tensor> tensores, int eje) {
     return move(TensorResul);
 }
 
-Tensor Tensor::view(const vector<size_t>& nueva_dim)const {
-    if (nueva_dim.size()>3 or nueva_dim.empty())
+
+Tensor Tensor::view(const vector<size_t>& nueva_dim) {
+    if (nueva_dim.size()>3 or nueva_dim.empty()) //Valida que las nuevas dimensiones sean apropiadas ()
         throw invalid_argument("Las dimensiones no son validas");
     size_t dim_tem = 1;
     for (const auto& i:nueva_dim)
         dim_tem*=i;
-    if (dim_tem!=this->dim_total)
+    if (dim_tem!=this->dim_total) //Valida que la cantida de valores previstos sea igual al del tensor
         throw invalid_argument("Las dimensiones no son compatibles");
     Tensor resultado;
     resultado.data = this->data;
     resultado.dimensiones = nueva_dim;
     resultado.dim_total = dim_tem;
+
+    this->data = nullptr;
+    this->dimensiones = {};
+    this->dim_total=0;
+
     return resultado; //FALA CORREGIR
 }
 
-Tensor Tensor::unsqueeze(size_t num) const{
-    if (this->dimensiones.size()==3)
+Tensor Tensor::unsqueeze(size_t num) {
+    if (this->dimensiones.size()==3) //Como este metodo agrega una dimension con valor 1, el Tensor no debe tener 3 dimensiones
         throw invalid_argument("El limite maximo de dimensiones es 3");
-    if (num>2 or num<0) //CAMBIAR
+    if (num>2 or num<0) //El numero ingresado debe estar entre 0-2, ya que se refiere a la posicion en la que se añadira la nueva dimension
         throw invalid_argument("Dimension no valida");
     Tensor resultado;
     resultado.data = this->data;
     resultado.dim_total = this->dim_total;
     resultado.dimensiones = this->dimensiones;
     resultado.dimensiones.insert(resultado.dimensiones.begin()+num,1);
+    //Usamos el metodo insert para ingresar la dimension de valor 1 en la posicion indicada
+
+    this->data = nullptr;
+    this->dimensiones = {};
+    this->dim_total=0;
+
     return resultado; //FALTA CORREGIR
 }
 
-
 Tensor dot(const Tensor& a, const Tensor& b) {
-    if (a.dimensiones != b.dimensiones)
+    if (a.dimensiones != b.dimensiones) //Valida que las dimensiones de los dos tensores sean iguales
         throw invalid_argument("Dimensiones incompatibles para dot");
-
     double suma = 0;
     for (size_t i = 0; i < a.dim_total; i++)
         suma += a.data[i] * b.data[i];
-
-    Tensor resultado({1}, {suma});
-    return resultado;
+    return move(Tensor({1},{suma}));
 }
 
+
 Tensor matmul(const Tensor& a, const Tensor& b) {
-    if (a.dimensiones.size()!=2 or b.dimensiones.size()!=2)
+    if (a.dimensiones.size()!=2 or b.dimensiones.size()!=2) //Valida que los tensores sean bidimensionales
         throw invalid_argument("matmul solo soporta tensores 2D");
-    size_t m = a.dimensiones[0];
-    size_t n = a.dimensiones[1];
-    size_t n2 = b.dimensiones[0];
-    size_t p = b.dimensiones[1];
-    if (n != n2)
+    //Al ser tensores bidimensionales, utilizamos la notacion 'filas X columnas' para mejor comprension
+    size_t m = a.dimensiones[0]; //Cantidad de filas del primer tensor
+    size_t n = a.dimensiones[1]; //Cantidad de columnas del primer tensor
+    size_t n2 = b.dimensiones[0]; //Cantidad de filas del segundo tensor
+    size_t p = b.dimensiones[1]; //Cantidad de columnas del segundo tensor
+    if (n != n2) //Para el producto matricial se requiere que las columnas del primer tensor sean iguales a las filas del segundo
         throw invalid_argument("Dimensiones incompatibles para matmul");
-    vector<double> valores(m * p, 0);
+    vector<double> valores(m * p);
     for (size_t i = 0; i < m; i++) {
         for (size_t j = 0; j < p; j++) {
             double suma = 0;
@@ -349,6 +359,44 @@ Tensor matmul(const Tensor& a, const Tensor& b) {
             valores[i * p + j] = suma;
         }
     }
-    Tensor resultado({m, p}, valores);
-    return move(resultado);
+    return move(Tensor({m,p},valores));
+}
+//(OPCIONAL) Sobrecarga de operador '<<' para verificar el funcionamiento de la red neuronal
+ostream& operator<<(ostream& os,const Tensor& t) {
+    if (t.dimensiones.size()==0)
+        return os;
+    vector<size_t> dims = t.dimensiones;
+    size_t num_dims = t.dim_total;
+    //Imprimir tensores 1D
+    if (dims.size()==1) {
+        os<<"<<<---------------------------------->>>\n";
+        for (size_t i=0;i<num_dims;i++)
+            os<<setw(10)<<t.data[i];
+        os<<"\n";
+    }
+    //Imprimir 2D
+    else if (dims.size()==2) {
+        os<<"<<<---------------------------------->>>\n";
+        for (size_t i=0;i<num_dims;i++) {
+            os<<setw(10)<<t.data[i];
+            if ((i+1)%dims[1]==0)
+                os<<"\n";
+        }
+    }
+    //Imprimir 3D
+    else {
+        os<<"<<<---------------------------------->>>\n";
+        int cont_capas = 1;
+        os<<"Capa: "<<cont_capas<<"\n";
+        for (size_t i=0;i<num_dims;i++) {
+            os<<setw(10)<<t.data[i];
+            if ((i+1)%(dims[0]*dims[1])==0 and (i+1)<num_dims) {
+                cont_capas++;
+                os<<"\n\nCapa : "<<cont_capas<<"\n";
+            }
+            else if ((i+1)%dims[1]==0)
+                os<<"\n";
+        }
+    }
+    return os;
 }
