@@ -4,6 +4,7 @@ Para su ejecución es necesario tener los siguientes archivos:
 - Tensor.h
 - Tensor.cpp
 - main.cpp
+
 En este caso recomendamo usar CLion, pero en si debería poder compilarse de forma manual u con otro entorno de programación.
 Ejecución:
 El archivo main.cpp tiene la simulación de una red neuronal que utiliza la clase Tensor. La clase Tensor almacena sus datos en memoria dinámica mediante un puntero double *, osea se trabaja con un array dinámico contiguo. Cada operación que se realice accede directamente a los elementos mediante índices que se recorre de forma lineal.
