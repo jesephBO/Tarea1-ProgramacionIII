@@ -13,7 +13,7 @@ El archivo main.cpp tiene la simulación de una red neuronal que utiliza la clas
 
 Durante la ejecución se llaman a otras funciones como:
 
--matmul: Combina los datos con los pesos.
+- matmul: Combina los datos con los pesos.
 - Operator(+): Suma los tensores.
 - View: Reorganiza los datos sin hacer una copia.
 - Unsqueeze: Ajusta las dimensiones para que se pueda realizer operaciones
