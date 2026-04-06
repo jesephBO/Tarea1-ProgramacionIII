@@ -1,6 +1,12 @@
 # Tarea1-ProgramacionIII
+El programa se centra en la construcción de la librería **Tensor++**, la cual permite el manejo de Tensores unidimensionales, bidimensionales y tridimensionales. A partir de esta librería se desarrolló una **red neuronal** compuesta de transformaciones lineales seguidas de funciones no-lineales.
+Para el desarrollo de esta librería, se construyó la clase Tensor en el lenguaje de programación C++. En esta clase se implementaron diferentes Constructores, asignadores de copia y movimiento, sobrecarga de operadores como suma,resta y multiplicación, entre otras funciones que responden a las posibilidad del usuario para el manejo de los Tensores.
+El usuario puede crear Tensores de 1D, 2D e inclusive 3D, tanto a través de datos ingresados por él como a traves de constructores pre-defindos.
+
+
 Compilación:
 Para su ejecución es necesario tener los siguientes archivos:
+- cmake-build-debug
 - Tensor.h
 - Tensor.cpp
 - main.cpp
