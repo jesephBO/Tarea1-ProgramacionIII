@@ -1,20 +1,18 @@
 # Tarea1-ProgramacionIII
-El programa se centra en la construcción de la librería **Tensor++**, la cual permite el manejo de Tensores unidimensionales, bidimensionales y tridimensionales. A partir de esta librería se desarrolló una **red neuronal** compuesta de transformaciones lineales seguidas de funciones no-lineales.
-Para el desarrollo de esta librería, se construyó la clase Tensor en el lenguaje de programación C++. En esta clase se implementaron diferentes Constructores, asignadores de copia y movimiento, sobrecarga de operadores como suma,resta y multiplicación, entre otras funciones que responden a las posibilidad del usuario para el manejo de los Tensores.
-El usuario puede crear Tensores de 1D, 2D e inclusive 3D, tanto a través de datos ingresados por él como a traves de constructores pre-defindos.
+El programa se centra en la construcción de la librería **Tensor++**, la cual abre diferentes posibilidades en el manejo de tensores unidimensionales, bidimensionales y tridimensionales. Como muestra de su versatilidad, se desarrolló una **red neuronal** basada en el uso de tensores bidimensionales y tridimensionales. En esta aplicación se trato de implementar las diversas funciones y operaciones que permite realizar la librería en relación al manejo de tensores.
+En lo que respecta al diseño interno de la librería, esta cuenta con distintos constructores, asignadores de copia y movimiento, así como sobrecarga de operadores y funciones especializadas que le permiten al usuario ejecutar diferentes operaciones sobre los tensores tales como suma, resta, multiplicación, concatenación, multiplicación matricial, producto punto, entre otras. 
 
 
-Compilación:
-Para su ejecución es necesario tener los siguientes archivos:
+## Ejecución
+Para la ejecución del programa es necesario guardar los siguientes archivos en una carpeta:
 - cmake-build-debug
 - Tensor.h
 - Tensor.cpp
 - main.cpp
 
-En este caso recomendamo usar CLion, pero en si debería poder compilarse de forma manual u con otro entorno de programación.
+*En este caso recomendamos usar CLion, aunque el programa puede ser ejecutada con normalidad en cualquier otro IDE.*
 
-Ejecución:
-
+## Diseño interno
 El archivo main.cpp tiene la simulación de una red neuronal que utiliza la clase Tensor. La clase Tensor almacena sus datos en memoria dinámica mediante un puntero double *, osea se trabaja con un array dinámico contiguo. Cada operación que se realice accede directamente a los elementos mediante índices que se recorre de forma lineal.
 
 Durante la ejecución se llaman a otras funciones como:
