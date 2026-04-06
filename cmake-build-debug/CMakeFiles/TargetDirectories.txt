@@ -1,3 +1,0 @@
-C:/Users/burgo/Desktop/UNIVERSIDAD/2026-I/PROGRA III/Tarea1/cmake-build-debug/CMakeFiles/Tarea1.dir
-C:/Users/burgo/Desktop/UNIVERSIDAD/2026-I/PROGRA III/Tarea1/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/burgo/Desktop/UNIVERSIDAD/2026-I/PROGRA III/Tarea1/cmake-build-debug/CMakeFiles/rebuild_cache.dir
