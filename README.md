@@ -59,7 +59,7 @@ Al igual que el asignador de copia, primero verifica que no haya auto-asignació
 
 ## Sobrecarga de operadores
 
-#### Operator + 
+#### Operator suma (operator+) 
 Primero valida que ambos tensores tengan la misma cantidad de dimensiones. Luego, si ambos son tensores 2D, implementa un caso especial de suma con bias. Si el segundo tensor tiene forma (1, n), se suma por columnas reutilizando los valores de esa fila en todas las filas del primer tensor, accediendo mediante índices como i*col_A + j. Si el segundo tensor tiene forma (m, 1), se suma por filas reutilizando el valor correspondiente a cada fila. 
 
 En caso de que no se cumpla el escenario de bias, se ejecuta la suma general. Aquí sí se incluyen tensores 1D, 2D y 3D. Primero se verifica que las dimensiones coincidan exactamente en tamaño y forma. Luego, como los datos están almacenados de manera lineal en memoria (double*), se recorre todo el arreglo usando un único bucle desde 0 hasta dim_total, realizando la suma elemento a elemento sin importar la cantidad de dimensiones.
@@ -70,6 +70,21 @@ funciona únicamente para tensores con dimensiones exactamente iguales (incluyen
 #### Operador de multiplicación (operator*) 
 funciona de dos maneras distintas. La primera es la multiplicación de un tensor con otro tensor, donde se recorre y se multiplica cada par de elementos, y el otro caso es la multiplicación de un tensor por un número, donde se recorre todo el arreglo data y se construye el vector con resultados nuevos después de haber sumado cada elemento con un valor constante. 
 
-## Polimorfismo y Transformaciones
-El programa cuenta con una clase 'TensorTransform'
+## Transformaciones
+El programa cuenta con una clase cirtual pura 'TensorTransform', a partir de la cual se utiliza herencia para crear las clases ReLU y Sigmoid. Estas clases derivadas permiten aplicar dos transformaciones diferentes a los valores de los tensores. En este caso, para acceder a los atributos de la clase 'Tensor' desde una clase externa se implementaron getters para obtener los valores de las dimensiones, la dimension total y los valores en un indice específico. Luego de realizar las operaciones específicas en cada clase, se retorna un nuevo tensor con las dimensiones del 'original' pero con los nuevos valores. 
+
+## Otras funcionalidades
+Adicionalmente, la librería 'Tensor++' le permite al usuario modificar las dimensiones de tensores que ya han sido creados. Esto se logra a través de las funciones 'view' y 'unsqueeze', las cuales permiten cambiar la organización de las dimensiones e ingresar una nueva dimension de valor 1, respectivamente.
+
+La función 'view' permite cambiar la organización lógica de los datos, siempre y cuando las nuevas dimensiones ingresadas coincidan con las dimensiones actuales del tensor. Para explicar el cambio en la organización es menester considerar que los datos estan almacenados en un array de una dimension, por lo cual no es necesario alterar el orden en el que estos se han guardado, únicamente modificamos las dimensiones. En cierto punto podríamos definir como **abstracta** la organización de los datos, ya que no existe como tal sino que se interpreta usando las dimensiones registradas.
+En cuanto a la funcion 'unsqueeze', esta utiliza una mecánica similar a la función 'view', puesto que para integrar la nueva dimensión de tamaño 1, unicamente se modifica el vector que contiene las dimensiones del tensor. No obstante, tambien se realiza un proceso de verificación previa para evaluar si las dimensiones actuales del tensor permiten agregar una nueva dimensión. Finalmente, la función retorna un nuevo tensor con las nuevas dimensiones pero con los mismo valores.
+
+Adicionalmente, otra de las funciones más resaltantes de la librería es 'concat', la cual permite concatenar dos tensores en un eje seleccionado por el usuario. Para esta función se realiza una verificación de extensiva para garantizar que el eje ingresado es valido y que los tensores ingresados tienen datos para concatenar. Para esta función, se requiere pasar el vector de tensores por copia, ya que se modificaran las dimensiones de estos objetos. Esta modificación consiste en que dependiendo de las dimensiones que ya tiene el tensor, agregar nuevas dimensiones con valor 1 para siempre trabajar con tensores 3D. Ello se hace con la finalida de reducir el control sobre la dimensionalidad del tensor y facilitar el proceso de concatenación. Posteriormnte, se utilizan estructras selectivas para evaluar el eje seleccionado por el usuario, y a traves de bucles -for anidados se iteran los dos tensores para crear el nuevo tensor concatenado. Un aspecto a resaltar es que por cada eje se realiza una validación adicional a las dimensiones de los tensores, ya que para concatenar, todas las dimensiones deben ser iguales a excepcion de aquella que corresponde al eje a traves del cual se concatenarán los tensores.
+
+
+
+se pasan por copia ya que la función modifica las
+
+
+## Funcion adicional
 Además, el programa imprime las dimensiones de los tensores en cada etapa, lo que facilita verificar que las operaciones se realizan correctamente.
