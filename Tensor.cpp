@@ -214,7 +214,9 @@ Tensor Tensor::concat(vector<Tensor> tensores, int eje) {
     for (const auto& tensor:tensores)
         if (tensor.dim_total==0)
             throw invalid_argument("No podemos concatenar un tensor vacio");
-    //Realizamos un truco dependiendo de la cantidad de dimensiones del primer tensor
+    if (tensores[0].dimensiones.size()!=tensores[1].dimensiones.size())
+        throw invalid_argument("No podemos concatenar tensores con diferente dimensionalidad");
+    //Realizamos un 'truco' dependiendo de la cantidad de dimensiones del primer tensor
     //Esto nos hace mas facil manejar las tres dimenesiones en los condicionales
     if (tensores[0].dimensiones.size()==1) {
         tensores[0].dimensiones.push_back(1);
@@ -279,11 +281,10 @@ Tensor Tensor::concat(vector<Tensor> tensores, int eje) {
                     }
                 }
     }
-    vector<double> DatosResultantes(newDimension_Total);
-    for (size_t i=0;i<newDimension_Total;i++)
-        DatosResultantes[i] = newTensor[i];
-    delete[] newTensor;
-    Tensor TensorResul({P,F,C},DatosResultantes);
+    Tensor TensorResul;
+    TensorResul.data = newTensor;
+    TensorResul.dimensiones = {P,F,C};
+    TensorResul.dim_total = P*F*C;
     return move(TensorResul);
 }
 
@@ -305,7 +306,7 @@ Tensor Tensor::view(const vector<size_t>& nueva_dim) {
     this->dimensiones = {};
     this->dim_total=0;
 
-    return resultado; //FALA CORREGIR
+    return resultado;
 }
 
 Tensor Tensor::unsqueeze(size_t num) {
@@ -324,7 +325,7 @@ Tensor Tensor::unsqueeze(size_t num) {
     this->dimensiones = {};
     this->dim_total=0;
 
-    return resultado; //FALTA CORREGIR
+    return resultado;
 }
 
 Tensor dot(const Tensor& a, const Tensor& b) {
