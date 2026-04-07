@@ -11,7 +11,7 @@ Para la ejecución del programa es necesario descargar los siguientes archivos d
 - Tensor.cpp
 - main.cpp
 
-*En este caso recomendamos usar CLion, aunque el programa puede ser ejecutada con normalidad en cualquier otro IDE.*
+*En este caso recomendamos usar CLion para abrir el proyecto*
 
 ## Diseño interno
 La librería Tensor++ tiene sus bases en la clase Tensor, cuya característica principal es el uso de memoria dinámica para almacenar los valores del tensor. El constructor principal recibe dos listas entre llaves, la primera correspondiente a las dimensiones del tensor y la segunda correspondiente a los valores que tendrá este tensor. A través de estructuras condicionales, el constructor valida que las dimensions del tensor se encuentren en un rango de 1-3 y que los valores ingresados correspondan a la cantidad de valores esperados por las dimensiones ingresadas. Si la validación es correcta, se utiliza un puntero double para acceder a la memoria dinámica y guardar los valores en un array. Es decir, que la clase se desarrolla en base a un array dinámico contiguo, el cual permite almacenar los valores de manera lineal (1 dimension). Esta opción facilita el manejo de los datos, especialmente al trabajar con tensores de dos y tres dimensiones, ya que únicamente se debe usar los indices (dimensiones) para acceder a datos específicos o manipular los tensores.
